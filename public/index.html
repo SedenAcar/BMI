@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Hesaplayıcı</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <h1>BMI Hesaplayıcı</h1>
+        <input v-model="weight" type="number" placeholder="Kilonuz (kg)">
+        <input v-model="height" type="number" placeholder="Boyunuz (cm)">
+        <button @click="calculateBMI">Hesapla</button>
+        <p v-if="bmi">BMI: {{ bmi.toFixed(2) }}</p>
+        <p v-if="category">Kategori: {{ category }}</p>
+    </div>
+
+    <script type="module">
+        const { createApp, ref, computed } = Vue;
+
+        createApp({
+            setup() {
+                const weight = ref('');
+                const height = ref('');
+                const bmi = ref(null);
+
+                const calculateBMI = () => {
+                    const w = parseFloat(weight.value);
+                    const h = parseFloat(height.value) / 100; // cm'yi m'ye çevir
+                    if (w > 0 && h > 0) {
+                        bmi.value = w / (h * h);
+                    }
+                };
+
+                const category = computed(() => {
+                    if (bmi.value === null) return '';
+                    if (bmi.value < 18.5) return 'Zayıf';
+                    if (bmi.value < 25) return 'Normal';
+                    if (bmi.value < 30) return 'Fazla Kilolu';
+                    return 'Obez';
+                });
+
+                return {
+                    weight,
+                    height,
+                    bmi,
+                    calculateBMI,
+                    category
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
